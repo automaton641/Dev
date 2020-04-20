@@ -8,7 +8,7 @@
     <property name="deps.dir" value="${jar.dir}/libs"/>
     <property name="libs.dir" value="libs"/>
 
-    <property name="main-class" value="automaton641.screen.Main"/>
+    <property name="main-class" value="automaton641.dev.Main"/>
 
     <target name="clean">
         <delete dir="${build.dir}"/>
