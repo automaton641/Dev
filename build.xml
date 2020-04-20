@@ -1,0 +1,65 @@
+<project name="Dev" basedir="." default="main">
+
+    <property name="src.dir" value="src"/>
+    <property name="resources.dir" value="resources"/>
+    <property name="build.dir" value="build"/>
+    <property name="classes.dir" value="${build.dir}/classes"/>
+    <property name="jar.dir" value="${build.dir}/jar"/>
+    <property name="deps.dir" value="${jar.dir}/libs"/>
+    <property name="libs.dir" value="libs"/>
+
+    <property name="main-class" value="automaton641.screen.Main"/>
+
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+    </target>
+
+    <target name="compile" depends="Library, add.jars">
+        <mkdir dir="${classes.dir}"/>
+        <javac includeantruntime="false" encoding="utf-8" srcdir="${src.dir}" destdir="${classes.dir}">
+            <classpath>
+                <pathelement path="${deps.dir}/Library.jar"/>
+            </classpath>
+        </javac>
+    </target>
+
+    <path id="dep.runtime">
+        <fileset dir="${deps.dir}">
+            <include name="**/*.jar" />
+        </fileset>
+    </path>
+
+    <target name="jar" depends="compile">
+        <mkdir dir="${jar.dir}"/>
+        <manifestclasspath property="manifest.classpath" jarfile="${jar.dir}/${ant.project.name}.jar">
+            <classpath refid="dep.runtime" />
+        </manifestclasspath>
+        <jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="${main-class}"/>
+                <attribute name="Class-Path" value="${manifest.classpath}"/>
+            </manifest>
+            <fileset dir="${resources.dir}" />
+        </jar>
+    </target>
+
+   <target name="Library">
+        <ant dir="../Library" target="main"/>
+        <copy file="../Library/build/jar/Library.jar" todir="${libs.dir}" overwrite="false"/>
+   </target>
+
+   <target name="add.jars">
+        <mkdir dir="${deps.dir}"/>
+        <copy file="${libs.dir}/Library.jar" todir="${deps.dir}" overwrite="false"/>
+   </target>
+
+    <target name="run" depends="jar">
+        <java jar="${jar.dir}/${ant.project.name}.jar" fork="true"></java>
+    </target>
+
+    <target name="clean-build" depends="clean,jar"/>
+    <target name="clean-run" depends="clean,run"/>
+
+    <target name="main" depends="run"/>
+
+</project>
